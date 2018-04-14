@@ -32,6 +32,7 @@ defmodule Interrogator.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:sweet_xml, "~> 0.6.5"},
       {:phoenix, "~> 1.3.0"},
       {:phoenix_pubsub, "~> 1.0"},
       {:gettext, "~> 0.11"},

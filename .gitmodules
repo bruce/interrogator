@@ -1,0 +1,3 @@
+[submodule "priv/bsdata"]
+	path = priv/bsdata
+	url = git@github.com:BSData/wh40k.git
