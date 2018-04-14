@@ -12,8 +12,8 @@ defmodule Interrogator.Catalogue.Loader do
 
   ## Boilerplate
 
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
 
   def init(_args) do
@@ -26,6 +26,9 @@ defmodule Interrogator.Catalogue.Loader do
   def handle_info(:rebuild, state) do
     for file <- SourceFile.list() do
       data = SourceFile.read!(file)
+      for {name, offset} <- Enum.with_index(data) do
+        Interrogator.Catalogue.insert(Interrogator.Catalogue.Units, {"#{Path.basename(file, ".cat")}-#{offset}", %{name: name}})
+      end
       Logger.warn "Loaded #{length data} units from #{Path.basename(file, ".cat")}"
     end
     {:noreply, state}
