@@ -1,8 +1,8 @@
-defmodule Interrogator.Source.Loader do
+defmodule Interrogator.Catalogue.Loader do
   use GenServer
   require Logger
 
-  alias Interrogator.Source.Reader
+  alias Interrogator.Catalogue.SourceFile
 
   ## Handlers
 
@@ -24,8 +24,8 @@ defmodule Interrogator.Source.Loader do
   ## Rebuild ETS tables
 
   def handle_info(:rebuild, state) do
-    for file <- Reader.files() do
-      data = Reader.read!(file)
+    for file <- SourceFile.list() do
+      data = SourceFile.read!(file)
       Logger.warn "Loaded #{length data} units from #{Path.basename(file, ".cat")}"
     end
     {:noreply, state}

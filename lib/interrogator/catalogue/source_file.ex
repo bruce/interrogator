@@ -1,4 +1,4 @@
-defmodule Interrogator.Source.Reader do
+defmodule Interrogator.Catalogue.SourceFile do
   import SweetXml
 
   def read!(filename) do
@@ -7,7 +7,7 @@ defmodule Interrogator.Source.Reader do
     |> do_read
   end
 
-  def files do
+  def list do
     Path.join(:code.priv_dir(:interrogator), "bsdata/*.cat")
     |> Path.wildcard
   end

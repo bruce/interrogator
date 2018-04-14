@@ -12,7 +12,7 @@ defmodule Interrogator.Application do
       supervisor(InterrogatorWeb.Endpoint, []),
       # Start your own worker by calling: Interrogator.Worker.start_link(arg1, arg2, arg3)
       # worker(Interrogator.Worker, [arg1, arg2, arg3]),
-      worker(Interrogator.Source.Loader, [])
+      worker(Interrogator.Catalogue.Loader, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
