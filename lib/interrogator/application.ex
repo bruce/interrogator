@@ -12,7 +12,9 @@ defmodule Interrogator.Application do
       supervisor(InterrogatorWeb.Endpoint, []),
       # Start your own worker by calling: Interrogator.Worker.start_link(arg1, arg2, arg3)
       # worker(Interrogator.Worker, [arg1, arg2, arg3]),
-      {Interrogator.Util.EtsStore, [Interrogator.Catalogue.Units]},
+      {Interrogator.Util.EtsStore, [Interrogator.Catalogue.Book]},
+      {Interrogator.Util.EtsStore, [Interrogator.Catalogue.Unit]},
+      {Interrogator.Util.EtsStore, [Interrogator.Catalogue.Source]},
       Interrogator.Catalogue.Loader
     ]
 
