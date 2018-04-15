@@ -1,32 +1,36 @@
 defmodule Interrogator.Catalogue do
 
-  @table __MODULE__.Units
-
-  def insert(row) do
-    :ets.insert(@table, row)
+  def insert(%table{} = row) do
+    insert(table, row)
   end
 
-  def get(id) do
-    case :ets.lookup(@table, id) do
-      [{_, attrs}] -> attrs
+  def insert(table, row) do
+    attrs = Map.from_struct(row)
+    :ets.insert(table, {attrs.id, attrs})
+  end
+
+  def get(table, id) do
+    case :ets.lookup(table, id) do
+      [{_, attrs}] -> struct(table, attrs)
       _ -> nil
     end
   end
 
-  def list do
-    @table
+  def list(table) do
+    table
     |> :ets.tab2list()
     |> Enum.sort()
     |> Enum.map(&elem(&1, 1))
+    |> Enum.map(&struct(table, &1))
   end
 
-  def find(fun) do
-    list()
+  def find(table, fun) do
+    list(table)
     |> Enum.find(fun)
   end
 
-  def filter(fun) do
-    list()
+  def filter(table, fun) do
+    list(table)
     |> Enum.filter(fun)
   end
 

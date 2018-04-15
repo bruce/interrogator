@@ -29,7 +29,7 @@ defmodule Interrogator.Catalogue.Loader do
       data = SourceFile.read!(file)
       for {name, offset} <- Enum.with_index(data) do
         id = "#{catalogue_name}-#{offset}"
-        Interrogator.Catalogue.insert({id, %{id: id, name: name, catalogue: catalogue_name}})
+        Interrogator.Catalogue.insert(%Interrogator.Catalogue.Unit{id: id, name: name})
       end
       Logger.warn "Loaded #{length data} units from #{Path.basename(file, ".cat")}"
     end
