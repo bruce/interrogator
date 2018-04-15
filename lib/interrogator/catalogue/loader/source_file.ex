@@ -1,5 +1,8 @@
-defmodule Interrogator.Catalogue.SourceFile do
+defmodule Interrogator.Catalogue.Loader.SourceFile do
   import SweetXml
+
+  @enforce_keys [:id, :name, :books]
+  defstruct [:id, :name, :books, units: []]
 
   def read!(filename) do
     filename
@@ -12,8 +15,20 @@ defmodule Interrogator.Catalogue.SourceFile do
     |> Path.wildcard
   end
 
-  defp do_read(data) do
-    SweetXml.stream_tags(data, :selectionEntry)
+  defp do_read(doc) do
+    data =
+      SweetXml.xpath(doc,
+        ~x"/catalogue",
+        [id: ~x"./@id"s,
+         name: ~x"./@name"s,
+         books: ~x"./@book"s
+        ]
+      )
+    struct(__MODULE__, Map.merge(data, %{units: read_units(doc)}))
+  end
+
+  defp read_units(doc) do
+    SweetXml.stream_tags(doc, :selectionEntry)
     |> Stream.filter(fn {_, tag} ->
       unit_tag?(tag) || model_tag?(tag)
     end)

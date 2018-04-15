@@ -2,7 +2,7 @@ defmodule Interrogator.Catalogue.Loader do
   use GenServer
   require Logger
 
-  alias Interrogator.Catalogue.SourceFile
+  alias Interrogator.Catalogue.Loader.SourceFile
 
   ## Handlers
 
@@ -27,11 +27,35 @@ defmodule Interrogator.Catalogue.Loader do
     for file <- SourceFile.list() do
       catalogue_name = Path.basename(file, ".cat")
       data = SourceFile.read!(file)
-      for {name, offset} <- Enum.with_index(data) do
+
+      # Build Source entry
+      static_attrs = %{filename: file, commit: "foo"}
+      parsed_attrs =
+        Map.take(data, ~w(id name)a)
+        |> Enum.filter(fn {_, v} -> v != "" end)
+        |> Map.new
+      source_attrs = Map.merge(static_attrs, parsed_attrs)
+      source_attrs =
+        if data.books && data.books != "" do
+          # Build Books
+          book_ids = String.split(data.books, ",") |> Enum.map(&String.trim/1)
+          for book_id <- book_ids do
+            Interrogator.Catalogue.insert(Interrogator.Catalogue.Book.from_name(book_id))
+          end
+          Map.put(source_attrs, :book_ids, book_ids)
+        else
+          source_attrs
+        end
+      source = struct(Interrogator.Catalogue.Source, source_attrs)
+      Interrogator.Catalogue.insert(source)
+
+      # Build Unit Entries
+      for {name, offset} <- Enum.with_index(data.units) do
         id = "#{catalogue_name}-#{offset}"
-        Interrogator.Catalogue.insert(%Interrogator.Catalogue.Unit{id: id, name: name})
+        Interrogator.Catalogue.insert(%Interrogator.Catalogue.Unit{id: id, name: name, source_id: source.id, source_line: 12})
       end
-      Logger.warn "Loaded #{length data} units from #{Path.basename(file, ".cat")}"
+
+      Logger.warn "Loaded #{length data.units} units from #{source.name}"
     end
     {:noreply, state}
   end
