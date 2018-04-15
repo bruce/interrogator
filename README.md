@@ -22,7 +22,7 @@ Interrogator.Catalogue.SourceFile.list()
 
 The GraphQL API is available at `/api/graphql`.
 
-GraphQL Playground is mounted at `/api/graphiql`.
+GraphiQL Playground is mounted at `/api/graphiql`.
 
 ### Example
 
